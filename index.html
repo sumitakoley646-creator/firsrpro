@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Attendance System</title>
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .form-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      padding: 25px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-header h2 {
+      color: #2c3e50;
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    .form-header p {
+      color: #7f8c8d;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #34495e;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #cccccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+      background-color: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: #3498db;
+    }
+
+    /* Radio button options for Status */
+    .status-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 5px;
+    }
+
+    .status-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.2s ease;
+    }
+
+    .status-btn input {
+      display: none;
+    }
+
+    .status-btn.present-btn:has(input:checked) {
+      background-color: #dcfce7;
+      border-color: #22c55e;
+      color: #15803d;
+    }
+
+    .status-btn.absent-btn:has(input:checked) {
+      background-color: #fee2e2;
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #3498db;
+      border: none;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background-color: #2980b9;
+    }
+
+    .submit-btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+
+    #message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .msg-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .msg-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <div class="form-header">
+      <h2>College Attendance Sheet</h2>
+      <p>Submit daily attendance records</p>
+    </div>
+
+    <form id="attendanceForm">
+      <div class="form-group">
+        <label for="studentName">Student Name</label>
+        <input type="text" id="studentName" required placeholder="Enter full name">
+      </div>
+
+      <div class="form-group">
+        <label for="rollNo">Roll Number</label>
+        <input type="text" id="rollNo" required placeholder="e.g. CS2026-042">
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <select id="department" required>
+          <option value="" disabled selected>Select Department</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Electrical Eng">Electrical Eng</option>
+          <option value="Mechanical Eng">Mechanical Eng</option>
+          <option value="Business Admin">Business Admin</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="subject">Subject / Class</label>
+        <input type="text" id="subject" required placeholder="e.g. Data Structures">
+      </div>
+
+      <div class="form-group">
+        <label>Attendance Status</label>
+        <div class="status-options">
+          <label class="status-btn present-btn">
+            <input type="radio" name="status" value="Present" checked> Present
+          </label>
+          <label class="status-btn absent-btn">
+            <input type="radio" name="status" value="Absent"> Absent
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Attendance</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+ <script>
+  // Paste your Apps Script Web App URL below
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbygjCBEY7ajN2NsBQMApeeYgkqpqFH28XCNqbw2uqQG5jOBERCz0ToqNWggLnkeLLFB3w/exec';
+
+  const form = document.getElementById('attendanceForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const messageDiv = document.getElementById('message');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // Disable button & change text while submitting
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Submitting...';
+    messageDiv.style.display = 'none';
+
+    // Gather form data
+    const formData = {
+      studentName: document.getElementById('studentName').value,
+      rollNo: document.getElementById('rollNo').value,
+      department: document.getElementById('department').value,
+      subject: document.getElementById('subject').value,
+      status: document.querySelector('input[name="status"]:checked').value
+    };
+
+    // Send data to Google Apps Script
+    fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors', // Bypasses CORS restriction for simple form POSTs
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(() => {
+      // Success response
+      messageDiv.className = 'msg-success';
+      messageDiv.innerText = 'Attendance recorded successfully!';
+      messageDiv.style.display = 'block';
+      
+      // Reset form
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Submit Attendance';
+    })
+    .catch(error => {
+      // Error handling
+      console.error('Error!', error.message);
+      messageDiv.className = 'msg-error';
+      messageDiv.innerText = 'Failed to record attendance. Please try again.';
+      messageDiv.style.display = 'block';
+      
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Submit Attendance';
+    });
+  });
+</script>
+</body>
+</html>
